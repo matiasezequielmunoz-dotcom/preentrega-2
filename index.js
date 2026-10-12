@@ -35,6 +35,7 @@ app.get('/api/contenido/:id', async (req, res) => {
 const CAMPOS = ['titulo', 'categoria', 'genero', 'sinopsis', 'temporadas', 'reparto', 'trailer'];
 
 function filtrarCampos(body) {
+  body = body || {};
   const limpio = {};
   for (const campo of CAMPOS) {
     if (body[campo] !== undefined) limpio[campo] = body[campo];
