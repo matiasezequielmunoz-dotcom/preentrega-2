@@ -103,5 +103,3 @@ MongoDB genera un `_id` para cada documento; la API lo usa para las operaciones 
 Subsecretaría de Energía, Minería e Hidrocarburos de Neuquén. (s. f.). *Portal SIG de Hidrocarburos de Neuquén*. Consultado el 15 de octubre de 2026.
 
 - [Portal SIG de Hidrocarburos de Neuquén](https://hidrocarburos.energianeuquen.gob.ar/portalgis/web/)
-- [Consulta de pozos activos asociados al petróleo](https://hidrocarburos.energianeuquen.gob.ar/geoserver/Hidrocarburos/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Hidrocarburos%3APozos&maxFeatures=4&outputFormat=application%2Fjson&CQL_FILTER=ESTADO_GIS%3D%27Activo%27%20AND%20FLUIDO%3D%27PET%27)
-- [Consulta de pozos del área Loma Campana](https://hidrocarburos.energianeuquen.gob.ar/geoserver/Hidrocarburos/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Hidrocarburos%3APozos&maxFeatures=5&outputFormat=application%2Fjson&CQL_FILTER=ESTADO_GIS%3D%27Activo%27%20AND%20FLUIDO%3D%27PET%27%20AND%20YACIMIENTO%20ILIKE%20%27%25LOMA%20CAMPANA%25%27)
