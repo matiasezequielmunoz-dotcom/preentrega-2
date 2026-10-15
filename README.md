@@ -1,102 +1,107 @@
-# Preentrega 2 - API REST con Node.js + MongoDB
+# Preentrega 2 - Gestión de pozos petroleros
 
-API REST con CRUD completo sobre el set de datos Trailerflix (películas y series), hecha con Node.js, Express y MongoDB Atlas.
+API para consultar y administrar información de pozos petroleros de Neuquén. Está desarrollada con Node.js, Express y MongoDB.
 
-## Tecnologías
-- Node.js
-- Express
-- MongoDB Atlas (driver oficial `mongodb`)
-- dotenv
+## Datos
 
-## Instalación
-1. Clonar el repositorio e instalar dependencias:
-```bash
+El archivo `pozos_petroleros.json` contiene siete pozos publicados en el [Portal SIG de Hidrocarburos de Neuquén](https://hidrocarburos.energianeuquen.gob.ar/portalgis/web/).
+Los registros incluyen código, nombre, yacimiento, área, estado, recurso, método de extracción, profundidad y operador. La profundidad está expresada en metros. Se conservan algunos datos técnicos tal como aparecen publicados.
+
+## Instalación y configuración
+
+1. Desde una terminal abierta en la carpeta del proyecto, instalar las dependencias:
+
+   ```bash
    npm install
-```
-2. Crear un archivo `.env` siguiendo el ejemplo de `.env.example` y completar `MONGO_URI` con la cadena de conexión de tu cluster.
-3. Importar `trailerflix.json` en MongoDB (base `trailerflix`, colección `contenido`).
+   ```
+
+2. Crear un archivo `.env` en la carpeta principal. Copiar los valores de `.env.example` y completar `MONGO_URI` con la dirección de conexión a MongoDB:
+
+   ```env
+   MONGO_URI=tu_direccion_de_conexion_a_mongodb
+   MONGO_DB=pozos_petroleros
+   MONGO_COLLECTION=pozos
+   PORT=3000
+   ```
+
+3. En MongoDB Compass, abrir la conexión correspondiente y seleccionar la base `pozos_petroleros` y la colección `pozos`. Para cargar los datos, elegir **Add Data > Import JSON or CSV**, seleccionar `pozos_petroleros.json` y confirmar el formato JSON.
+
 4. Iniciar el servidor:
+
+   ```bash
+   npm start
+   ```
+
+   Dejá abierta esa terminal mientras uses la API. Queda disponible en `http://localhost:3000`.
+
+Para comprobar la conexión con MongoDB:
+
 ```bash
-   node index.js
-```
-   El servidor queda en `http://localhost:3000`.
-
-## Endpoints
-
-| Método | Ruta | Descripción | Códigos de respuesta |
-|--------|------|-------------|----------------------|
-| GET | `/api/contenido` | Lista todo el contenido | 200, 500 |
-| GET | `/api/contenido/:id` | Obtiene un título por su `_id` | 200, 400, 404, 500 |
-| POST | `/api/contenido` | Crea un título nuevo | 201, 400, 500 |
-| PUT | `/api/contenido/:id` | Actualiza campos de un título | 200, 400, 404, 500 |
-| DELETE | `/api/contenido/:id` | Elimina un título | 200, 400, 404, 500 |
-
-## Ejemplos
-
-### GET /api/contenido
-Respuesta (200):
-```json
-[
-  {
-    "_id": "6acd4928682a05914762feb6",
-    "id": 28,
-    "titulo": "Interestelar",
-    "categoria": "Película",
-    "genero": "Ciencia Ficción, Drama, Aventura",
-    "sinopsis": "...",
-    "temporadas": "N/A",
-    "reparto": "Matthew McConaughey, Anne Hathaway"
-  }
-]
+node test.js
 ```
 
-### GET /api/contenido/:id
-Ejemplo: `GET /api/contenido/6acd4928682a05914762feb6`
+## Rutas de la API
 
-Respuesta (200): el documento completo.
-Si el id no es válido (400): `{ "error": "ID inválido" }`
-Si no existe (404): `{ "error": "No encontrado" }`
+Se pueden probar con Thunder Client en VS Code.
 
-### POST /api/contenido
-Campos obligatorios: `titulo` y `categoria`.
+| Método | Dirección | Qué hace |
+|--------|-----------|----------|
+| GET | `/api/pozos` | Muestra todos los pozos. |
+| GET | `/api/pozos/:id` | Busca un pozo por su identificador de MongoDB. |
+| GET | `/api/pozos/buscar/:termino` | Busca por código, nombre, yacimiento, área u operador. |
+| POST | `/api/pozos` | Agrega un pozo. |
+| PUT | `/api/pozos/:id` | Modifica los datos enviados de un pozo. |
+| DELETE | `/api/pozos/:id` | Elimina un pozo. |
 
-Body:
+En `:id`, usá el valor `_id` que devuelve MongoDB. En `:termino`, escribí el dato que quieras buscar. Por ejemplo: `http://localhost:3000/api/pozos/buscar/LOMA%20NEGRA`.
+
+### Agregar un pozo
+
+Elegí **POST** y usá `http://localhost:3000/api/pozos`. Este ejemplo es inventado y sirve para probar el alta:
+
 ```json
 {
-  "titulo": "Prueba",
-  "categoria": "Película",
-  "genero": "Drama",
-  "sinopsis": "Una película de prueba",
-  "reparto": "Actor Uno, Actriz Dos"
+  "codigo": "P99999",
+  "nombre": "Pozo de ejemplo",
+  "yacimiento": "Yacimiento de ejemplo",
+  "area": "Area de ejemplo",
+  "estado": "Activo",
+  "fluido": "Petroleo",
+  "profundidadMedida": 2500
 }
 ```
-Respuesta (201):
+
+Son obligatorios `codigo`, `nombre`, `yacimiento`, `estado`, `fluido` y `profundidadMedida`. No se puede repetir el código de otro pozo.
+
+### Modificar, consultar o eliminar
+
+Para estas operaciones, usá la dirección `http://localhost:3000/api/pozos/<id>` y reemplazá `<id>` por el `_id` del pozo.
+
+Para modificar, elegí **PUT** y enviá únicamente los campos que quieras cambiar:
+
 ```json
 {
-  "_id": "6acd5fd033ebacab333a2db4",
-  "titulo": "Prueba",
-  "categoria": "Película",
-  "genero": "Drama",
-  "sinopsis": "Una película de prueba",
-  "reparto": "Actor Uno, Actriz Dos",
-  "id": 31
+  "estado": "En revisión"
 }
 ```
-Si faltan campos (400): `{ "error": "Faltan campos obligatorios: titulo y categoria" }`
 
-### PUT /api/contenido/:id
-Body (solo los campos a cambiar):
-```json
-{ "titulo": "Prueba modificada" }
-```
-Respuesta (200): `{ "mensaje": "Actualizado correctamente" }`
-Si no existe (404): `{ "error": "No encontrado" }`
+Para consultar, elegí **GET**; para eliminar, elegí **DELETE**.
 
-### DELETE /api/contenido/:id
-Respuesta (200): `{ "mensaje": "Eliminado correctamente" }`
-Si no existe (404): `{ "error": "No encontrado" }`
+## Respuestas
 
-## Manejo de errores
-- **400**: id inválido, campos faltantes o body sin campos válidos.
-- **404**: el título no existe.
-- **500**: error interno del servidor.
+- `200`: consulta, modificación o eliminación realizada.
+- `201`: pozo agregado.
+- `400`: datos inválidos o campos obligatorios ausentes.
+- `404`: no se encontró el pozo.
+- `409`: ya existe un pozo con ese código.
+- `500`: error del servidor o de conexión con MongoDB.
+
+MongoDB genera un `_id` para cada documento; la API lo usa para las operaciones individuales. El `id` numérico del JSON es una referencia sencilla para los siete registros.
+
+## Fuentes consultadas
+
+Subsecretaría de Energía, Minería e Hidrocarburos de Neuquén. (s. f.). *Portal SIG de Hidrocarburos de Neuquén*. Consultado el 15 de octubre de 2026.
+
+- [Portal SIG de Hidrocarburos de Neuquén](https://hidrocarburos.energianeuquen.gob.ar/portalgis/web/)
+- [Consulta de pozos activos asociados al petróleo](https://hidrocarburos.energianeuquen.gob.ar/geoserver/Hidrocarburos/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Hidrocarburos%3APozos&maxFeatures=4&outputFormat=application%2Fjson&CQL_FILTER=ESTADO_GIS%3D%27Activo%27%20AND%20FLUIDO%3D%27PET%27)
+- [Consulta de pozos del área Loma Campana](https://hidrocarburos.energianeuquen.gob.ar/geoserver/Hidrocarburos/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Hidrocarburos%3APozos&maxFeatures=5&outputFormat=application%2Fjson&CQL_FILTER=ESTADO_GIS%3D%27Activo%27%20AND%20FLUIDO%3D%27PET%27%20AND%20YACIMIENTO%20ILIKE%20%27%25LOMA%20CAMPANA%25%27)
