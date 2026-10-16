@@ -100,6 +100,7 @@ MongoDB genera un `_id` para cada documento; la API lo usa para las operaciones 
 
 ## Fuentes consultadas
 
-Subsecretaría de Energía, Minería e Hidrocarburos de Neuquén. (s. f.). *Portal SIG de Hidrocarburos de Neuquén*. Consultado el 15 de octubre de 2026.
+Subsecretaría de Energía, Minería e Hidrocarburos de Neuquén.
+*Portal SIG de Hidrocarburos de Neuquén*. 
 
 - [Portal SIG de Hidrocarburos de Neuquén](https://hidrocarburos.energianeuquen.gob.ar/portalgis/web/)
